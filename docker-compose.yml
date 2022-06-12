@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  lavalink:
+    container_name: flynn_lavalink
+    # image: fredboat/lavalink:main
+    image: dougley/lavalink
+    restart: unless-stopped
+    volumes:
+      - ./lavalink.yml:/opt/Lavalink/application.yml
+    ports:
+      - 2333:2333
