@@ -21,12 +21,7 @@ import { MusicModule } from './music/music.module';
       useFactory: (config: ConfigService) => ({
         token: config.get<string>('TOKEN'),
         discordClientOptions: {
-          intents: [
-            Intents.FLAGS.GUILDS,
-            Intents.FLAGS.GUILD_MESSAGES,
-            Intents.FLAGS.GUILD_MEMBERS,
-            Intents.FLAGS.GUILD_VOICE_STATES,
-          ],
+          intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_VOICE_STATES],
         },
         registerCommandOptions: [{ forGuild: '819258123940003881' }],
       }),
