@@ -1,12 +1,5 @@
 import { plainToClass } from 'class-transformer';
-import {
-  IsDefined,
-  IsEnum,
-  IsInt,
-  IsIP,
-  IsOptional,
-  IsString, validateSync
-} from 'class-validator';
+import { IsDefined, IsEnum, IsInt, IsIP, IsOptional, IsString, validateSync } from 'class-validator';
 
 export enum Env {
   PROD = 'production',
@@ -37,12 +30,14 @@ export class Configuration {
 
   @IsString()
   LAVALINK_PASSWORD: string;
+
+  @IsString()
+  @IsOptional()
+  DEV_GUILDS: string;
 }
 
 export const validateConfig = (config: Record<string, unknown>) => {
-  const nulledConfig = Object.fromEntries(
-    Object.entries(config).filter(([, value]) => value !== ''),
-  );
+  const nulledConfig = Object.fromEntries(Object.entries(config).filter(([, value]) => value !== ''));
 
   const validatedConfig = plainToClass(Configuration, nulledConfig, {
     enableImplicitConversion: true,

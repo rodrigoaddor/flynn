@@ -23,7 +23,12 @@ import { MusicModule } from './music/music.module';
         discordClientOptions: {
           intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_VOICE_STATES],
         },
-        registerCommandOptions: [{ forGuild: '819258123940003881' }],
+        registerCommandOptions: config
+          .get<string>('DEV_GUILDS')
+          .split(',')
+          .map((guildId) => ({
+            forGuild: guildId,
+          })),
       }),
     }),
     MusicModule,
