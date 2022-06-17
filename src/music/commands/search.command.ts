@@ -13,14 +13,12 @@ import {
   InteractionReplyOptions,
   Message,
   MessageActionRow,
-  MessageActionRowComponent,
-  MessageActionRowComponentResolvable,
   MessageButton,
   MessageSelectMenu,
   SelectMenuInteraction,
 } from 'discord.js';
 import { Track } from 'shoukaku';
-import { isUrl, truncate } from 'src/utils/string';
+import { isUrl } from 'src/utils/string';
 import { MusicService } from '../music.service';
 
 class SearchCommandDto {
@@ -134,22 +132,5 @@ export class SearchCommand implements DiscordTransformedCommand<SearchCommandDto
         }),
       ],
     });
-  }
-
-  private buildList(
-    tracks: Track[],
-  ): MessageActionRow<MessageActionRowComponent, MessageActionRowComponentResolvable, any>[] {
-    return tracks.map(
-      (track, index) =>
-        new MessageActionRow({
-          components: [
-            new MessageButton({
-              customId: `${index}`,
-              label: truncate(track.info.title, 80),
-              style: 'PRIMARY',
-            }),
-          ],
-        }),
-    );
   }
 }
