@@ -32,20 +32,17 @@ export class PlayCommand implements DiscordTransformedCommand<PlayDto> {
       const { member } = interaction;
       if (!(member instanceof GuildMember)) throw new Error('Member is not a GuildMember');
       await this.service.join(member as GuildMember);
+      const isSearch = !isUrl(input);
 
-      let query: string;
-      if (isUrl(input)) {
-        query = input;
-      } else {
-        query = `ytsearch:${input}`;
-      }
+      const query = isSearch ? `ytsearch:${input}` : input;
 
       const tracks = await this.service.search(query);
 
-      this.service.play(member, tracks[0]);
+      this.service.play(member, isSearch ? tracks[0] : tracks);
+
       return {
         ephemeral: true,
-        content: `Playing ${tracks[0].info.title}`,
+        content: isSearch ? `Playing ${tracks[0].info.title}` : `Added ${tracks.length} to the queue`,
       } as InteractionReplyOptions;
     } catch (e) {
       return {
