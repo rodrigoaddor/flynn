@@ -8,7 +8,7 @@ import { Connectors, Node, Player, Shoukaku, Track } from 'shoukaku';
 export class MusicService {
   private readonly shoukaku: Shoukaku;
 
-  public readonly queue: Map<string, Track[]> = new Map();
+  protected readonly queue: Map<string, Track[]> = new Map();
 
   constructor(readonly config: ConfigService, @InjectDiscordClient() private readonly client: Client) {
     this.shoukaku = new Shoukaku(new Connectors.DiscordJS(client), [
@@ -23,11 +23,19 @@ export class MusicService {
   }
 
   protected get node(): Node {
-    return this.shoukaku.getNode();
+    const node = this.shoukaku.getNode();
+    if (!node) {
+      throw new Error('No node available');
+    }
+    return node;
   }
 
   protected get players(): Map<string, Player> {
     return this.shoukaku.players;
+  }
+
+  public getQueue(guild: string): Track[] | undefined {
+    return [...this.queue.get(guild)];
   }
 
   async join(member: GuildMember, force: boolean = false): Promise<Player> {

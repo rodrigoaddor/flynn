@@ -1,12 +1,5 @@
 import { Command, DiscordCommand } from '@discord-nestjs/core';
-import {
-  CommandInteraction,
-  Message,
-  MessageActionRow,
-  MessageActionRowComponent,
-  MessageButton,
-  MessageEmbed,
-} from 'discord.js';
+import { CommandInteraction, Message, MessageActionRow, MessageButton, MessageEmbed } from 'discord.js';
 import { Track } from 'shoukaku';
 import { MusicService } from '../music.service';
 import dayjs from 'src/utils/dayjs';
@@ -19,7 +12,7 @@ export class QueueCommand implements DiscordCommand {
   constructor(private readonly service: MusicService) {}
 
   async handler(interaction: CommandInteraction) {
-    const currentQueue = this.service.queue.get(interaction.guildId) ?? [];
+    const currentQueue = this.service.getQueue(interaction.guildId) ?? [];
 
     if (currentQueue.length) {
       // componentize this?
@@ -91,7 +84,7 @@ export class QueueCommand implements DiscordCommand {
     const message = (await interaction.editReply({
       content: `There are ${queue.length} tracks in the queue.`,
       embeds: [this.buildEmbed(queue, { page, limit })],
-      components: [this.buildButtons(page, queue.length / limit)],
+      components: [this.buildButtons(page, Math.floor(queue.length / limit))],
     })) as Message;
 
     message
@@ -111,6 +104,12 @@ export class QueueCommand implements DiscordCommand {
             return this.handleReactions(interaction, queue, page + 1, limit);
         }
       })
-      .catch();
+      .catch(() =>
+        interaction.editReply({
+          content: '_Command timed out._',
+          components: [],
+          embeds: [],
+        }),
+      );
   }
 }
