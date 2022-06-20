@@ -106,4 +106,24 @@ export class MusicService {
       player.playTrack({ track: this.queue.get(guild.id)[0].track });
     }
   }
+
+  async skip({ guild }: GuildMember) {
+    const currentQueue = this.queue.get(guild.id);
+
+    if (!Array.isArray(currentQueue) || currentQueue.length === 0) {
+      throw new Error('The queue is empty');
+    } else {
+      const player = this.players.get(guild.id);
+      const queue = this.queue.get(guild.id);
+      if (player && Array.isArray(queue) && queue.length > 0) {
+        player.stopTrack();
+        queue.shift();
+        if (queue.length > 0) {
+          player.playTrack(queue[0]);
+        }
+      } else {
+        throw new Error('Nothing is playing');
+      }
+    }
+  }
 }
